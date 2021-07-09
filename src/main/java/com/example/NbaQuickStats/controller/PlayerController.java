@@ -1,31 +1,23 @@
 package com.example.NbaQuickStats.controller;
-
 import com.example.NbaQuickStats.model.Player;
 import com.example.NbaQuickStats.model.PlayerAdv;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-
-import static java.util.Objects.nonNull;
+import java.util.*;
 
 @RestController
 public class PlayerController {
     @Autowired
     private WebClient.Builder webClientBuilder;
 
+    final int numLeaders = 10;
     private List<Integer> allPlayerIDs = new ArrayList<>();
     private List<Player> allPlayers = new ArrayList<>();
     private List<PlayerAdv> allPlayersAdv = new ArrayList<>();
@@ -45,6 +37,18 @@ public class PlayerController {
         welcomeMessage += "This will give players who averaged within a specific range of points, assists and rebounds, respectively. ";
         welcomeMessage += "And finally, to view a player with a specific ID number, you can visit /(PLAYER_ID).";
         return welcomeMessage;
+    }
+
+    // View scoring leaders from 2020-21 NBA season
+    @RequestMapping("/pts-leaders")
+    public List<PlayerAdv> ptsLeaders() {
+        getAllPlayers();
+        getAllPlayersAdv();
+
+        List<PlayerAdv> playersAdvCopy = allPlayersAdv;
+        Collections.sort(playersAdvCopy,
+                Comparator.comparingDouble(PlayerAdv::getPts).reversed());
+        return playersAdvCopy.subList(0, numLeaders);
     }
 
     // Loop over 5 pages of NBA game logs, see which players appear, & take down their info
@@ -104,6 +108,10 @@ public class PlayerController {
     private void getAllPlayersAdv() {
         if (allPlayerIDs.size() == 0) {
             getAllPlayers();
+        }
+
+        if (allPlayersAdv.size() != 0) {
+            return;
         }
 
         String playerStatsUrl = "https://www.balldontlie.io/api/v1/season_averages?season=2020";
