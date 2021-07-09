@@ -17,7 +17,7 @@ public class PlayerController {
     @Autowired
     private WebClient.Builder webClientBuilder;
 
-    final int numLeaders = 10;
+    final int numLeaders = 50;
     private List<Integer> allPlayerIDs = new ArrayList<>();
     private List<Player> allPlayers = new ArrayList<>();
     private List<PlayerAdv> allPlayersAdv = new ArrayList<>();
@@ -28,14 +28,10 @@ public class PlayerController {
         getAllPlayersAdv();
 
         String welcomeMessage = "Welcome to NBA Quick Stats! ";
-        welcomeMessage += "To view season leaders (top 10 in a category), visit the following URLs --> ";
+        welcomeMessage += "To view season leaders (top 50 in a category), visit the following URLs --> ";
         welcomeMessage += "Points Leaders: /pts-leaders, Assist Leaders: /ast-leaders, ";
         welcomeMessage += "Rebound Leaders: /reb-leaders, Block Leaders: /blk-leaders, ";
-        welcomeMessage += "FG % Leaders: /fg-pct-leaders, 3PT % Leaders: /3pt-pct-leaders, FT % Leaders: /ft-pct-leaders. ";
-        welcomeMessage += "To view players who averaged a certain range in a statistical category, you can visit: ";
-        welcomeMessage += "/minPts=(MIN_PTS)&maxPts=(MAX_PTS), /minAst=(MIN_AST)&maxAst=(MAX_AST), /minReb=(MIN_REB)&maxReb=(MAX_REB). ";
-        welcomeMessage += "This will give players who averaged within a specific range of points, assists and rebounds, respectively. ";
-        welcomeMessage += "And finally, to view a player with a specific ID number, you can visit /(PLAYER_ID).";
+        welcomeMessage += "FG % Leaders: /fg-pct-leaders, 3PT % Leaders: /3pt-pct-leaders, FT % Leaders: /ft-pct-leaders.";
         return welcomeMessage;
     }
 
@@ -48,6 +44,78 @@ public class PlayerController {
         List<PlayerAdv> playersAdvCopy = allPlayersAdv;
         Collections.sort(playersAdvCopy,
                 Comparator.comparingDouble(PlayerAdv::getPts).reversed());
+        return playersAdvCopy.subList(0, numLeaders);
+    }
+
+    // Assist leaders
+    @RequestMapping("/ast-leaders")
+    public List<PlayerAdv> astLeaders() {
+        getAllPlayers();
+        getAllPlayersAdv();
+
+        List<PlayerAdv> playersAdvCopy = allPlayersAdv;
+        Collections.sort(playersAdvCopy,
+                Comparator.comparingDouble(PlayerAdv::getAst).reversed());
+        return playersAdvCopy.subList(0, numLeaders);
+    }
+
+    // Rebound leaders
+    @RequestMapping("/reb-leaders")
+    public List<PlayerAdv> rebLeaders() {
+        getAllPlayers();
+        getAllPlayersAdv();
+
+        List<PlayerAdv> playersAdvCopy = allPlayersAdv;
+        Collections.sort(playersAdvCopy,
+                Comparator.comparingDouble(PlayerAdv::getReb).reversed());
+        return playersAdvCopy.subList(0, numLeaders);
+    }
+
+    // Block leaders
+    @RequestMapping("/blk-leaders")
+    public List<PlayerAdv> blkLeaders() {
+        getAllPlayers();
+        getAllPlayersAdv();
+
+        List<PlayerAdv> playersAdvCopy = allPlayersAdv;
+        Collections.sort(playersAdvCopy,
+                Comparator.comparingDouble(PlayerAdv::getBlk).reversed());
+        return playersAdvCopy.subList(0, numLeaders);
+    }
+
+    // FG % leaders
+    @RequestMapping("/fg-pct-leaders")
+    public List<PlayerAdv> fgPctLeaders() {
+        getAllPlayers();
+        getAllPlayersAdv();
+
+        List<PlayerAdv> playersAdvCopy = allPlayersAdv;
+        Collections.sort(playersAdvCopy,
+                Comparator.comparingDouble(PlayerAdv::getFgPct).reversed());
+        return playersAdvCopy.subList(0, numLeaders);
+    }
+
+    // 3pt % leaders
+    @RequestMapping("/3pt-pct-leaders")
+    public List<PlayerAdv> threePtPctLeaders() {
+        getAllPlayers();
+        getAllPlayersAdv();
+
+        List<PlayerAdv> playersAdvCopy = allPlayersAdv;
+        Collections.sort(playersAdvCopy,
+                Comparator.comparingDouble(PlayerAdv::getThreePtPct).reversed());
+        return playersAdvCopy.subList(0, numLeaders);
+    }
+
+    // FT % leaders
+    @RequestMapping("/ft-pct-leaders")
+    public List<PlayerAdv> ftPctLeaders() {
+        getAllPlayers();
+        getAllPlayersAdv();
+
+        List<PlayerAdv> playersAdvCopy = allPlayersAdv;
+        Collections.sort(playersAdvCopy,
+                Comparator.comparingDouble(PlayerAdv::getFtPct).reversed());
         return playersAdvCopy.subList(0, numLeaders);
     }
 
